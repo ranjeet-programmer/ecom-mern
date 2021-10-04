@@ -15,6 +15,7 @@ const ForgotPassword = ({ history }) => {
       history.push("/");
     }
   }, [user]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
