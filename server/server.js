@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
+const { readdirSync } = require("fs");
 
 // app
 const app = express();
@@ -22,13 +23,8 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(cors());
 
-// route
-
-app.get("/api", (req, res) => {
-  res.json({
-    data: "ranjeet hinge",
-  });
-});
+// routes-middleware
+readdirSync("./routes").map((r) => app.use("/api", require("./routes/" + r)));
 
 //port
 
