@@ -2,12 +2,19 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-const cors = require("cors");
+
 require("dotenv").config();
 const { readdirSync } = require("fs");
 
 // app
 const app = express();
+
+const cors = require("cors");
+// const corsOptions = {
+//   origin: "http://localhost:3000",
+//   credentials: true, //access-control-allow-credentials:true
+//   optionSuccessStatus: 200,
+// };
 
 //db
 mongoose
@@ -20,7 +27,7 @@ mongoose
 // middlewares
 
 app.use(morgan("dev"));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "2mb" }));
 app.use(cors());
 
 // routes-middleware
