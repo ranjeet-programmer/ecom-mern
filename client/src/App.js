@@ -22,7 +22,7 @@ import Password from "./pages/user/Password";
 import Wishlist from "./pages/user/Wishlist";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AllProducts from "./pages/admin/product/AllProducts";
-
+import Product from "./pages/Product";
 import { auth } from "firebase";
 import { useDispatch } from "react-redux";
 import { currentUser } from "./functions/auth";
@@ -86,6 +86,7 @@ function App() {
           path="/admin/product/:slug"
           component={ProductUpdate}
         />
+        <Route exact path="/product/:slug" component={Product} />
       </Switch>
     </>
   );
