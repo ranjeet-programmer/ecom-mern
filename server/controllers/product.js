@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const slugify = require("slugify");
+const User = require("../models/user");
 
 exports.create = async (req, res) => {
   try {
@@ -69,30 +70,6 @@ exports.update = async (req, res) => {
   }
 };
 
-// without pagination
-
-// exports.list = async (req, res) => {
-//   try {
-//     const { sort, order, limit } = req.body;
-
-//     /*
-//       Here sort = createdAt or UpdatedAt
-//       and order = Ascending or Descending
-//     */
-
-//     const products = await Product.find({})
-//       .populate("category")
-//       .populate("subs")
-//       .sort([[sort, order]])
-//       .limit(limit)
-//       .exec();
-
-//     res.json(products);
-//   } catch (error) {
-//     console.log(err);
-//   }
-// };
-
 // with pagination
 
 exports.list = async (req, res) => {
@@ -123,4 +100,43 @@ exports.productsCount = async (req, res) => {
   let total = await Product.find({}).estimatedDocumentCount().exec();
 
   res.json(total);
+};
+
+exports.productStar = async (req, res) => {
+  const product = await Product.findById(req.params.productId).exec();
+  const user = await User.findOne({ email: req.user.email }).exce();
+  const { star } = req.body;
+
+  // who is updating?
+  // check if currently logged in user have already added rating to this product ?
+
+  let existingRatingObject = product.ratings.find((e) => {
+    e.postedBy.toString() === user._id.toString();
+  });
+
+  // if user haven't given rating yet then add it
+
+  if (existingRatingObject === undefined) {
+    let ratingAdded = await Product.findByIdAndUpdate(
+      product._id,
+      {
+        $push: { ratings: { star: star, postedBy: user._id } },
+      },
+      { new: true }
+    ).exec();
+
+    res.json(ratingAdded);
+  } else {
+    // if user already given a rating then update it
+
+    let ratingUpdated = await Product.updateOne(
+      {
+        ratings: { $elementMatch: existingRatingObject },
+      },
+      { $set: { "ratings.$.star": star } },
+      { new: true }
+    ).exec();
+
+    res.json(ratingUpdated);
+  }
 };

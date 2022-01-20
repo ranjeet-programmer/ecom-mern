@@ -2,19 +2,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const cors = require("cors");
+const { readdirSync } = require("fs");
 
 require("dotenv").config();
-const { readdirSync } = require("fs");
 
 // app
 const app = express();
 
-const cors = require("cors");
-// const corsOptions = {
-//   origin: "http://localhost:3000",
-//   credentials: true, //access-control-allow-credentials:true
-//   optionSuccessStatus: 200,
-// };
 
 //db
 mongoose
@@ -26,15 +21,14 @@ mongoose
 
 // middlewares
 
-app.use(morgan("dev"));
+app.use(morgan("dev"));   // print the URL in terminal
 app.use(bodyParser.json({ limit: "2mb" }));
-app.use(cors());
+app.use(cors());  // allows to share data between two different origins
 
 // routes-middleware
 readdirSync("./routes").map((r) => app.use("/api", require("./routes/" + r)));
 
 //port
-
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`server is running on port ${port}`));
